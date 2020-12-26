@@ -13,3 +13,9 @@
     <slot></slot>
   </div>
 </div>
+
+<style>
+  .container, .section {
+    @apply relative;
+  }
+</style>

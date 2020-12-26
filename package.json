@@ -4,6 +4,9 @@
   "description": "primo is an all-in-one ide, cms, component library, and static site generator",
   "main": "index.js",
   "svelte": "index.js",
+  "scripts": {
+    "dev" : "cd example && npm run dev"
+  },
   "keywords": [
     "primo",
     "ide",
@@ -65,7 +68,7 @@
     "lz-string": "^1.4.4",
     "marked": "^1.2.5",
     "mousetrap": "^1.6.5",
-    "object-path": "^0.11.4",
+    "object-path": "^0.11.5",
     "pluralize": "^8.0.0",
     "prettier": "^2.1.2",
     "primo-app": "^1.0.7",

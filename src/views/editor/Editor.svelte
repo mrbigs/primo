@@ -113,21 +113,21 @@
         icon: 'heading',
         buttons: _.flatten(editorialButtons)
       },
-      {
-        title: 'Symbol Library',
-        id: 'symbol-library',
-        icon: 'clone',
-        onclick: () => modal.show('COMPONENT_LIBRARY', {
-          button: {
-            onclick: addComponentToPage
-          }
-        }) 
-      },
-      {
-        title: 'Page Section',
-        icon: 'columns',
-        onclick: () => modal.show('PAGE_SECTIONS') 
-      },
+      // {
+      //   title: 'Symbol Library',
+      //   id: 'symbol-library',
+      //   icon: 'clone',
+      //   onclick: () => modal.show('COMPONENT_LIBRARY', {
+      //     button: {
+      //       onclick: addComponentToPage
+      //     }
+      //   }) 
+      // },
+      // {
+      //   title: 'Page Section',
+      //   icon: 'columns',
+      //   onclick: () => modal.show('PAGE_SECTIONS') 
+      // },
     ],
     [
       {
@@ -147,48 +147,48 @@
         onclick: () => modal.show('SITE_PAGES') 
       }
     ],
-    [
-      {
-        id: 'toolbar--formatting',
-        title: 'Content',
-        icon: 'heading',
-        buttons: _.flatten(editorialButtons)
-      }
-    ],
-    [
-      {
-        id: 'toolbar--component',
-        title: 'Component',
-        icon: 'code',
-        onclick: () => modal.show('COMPONENT_EDITOR', {
-          header: {
-            title: 'Create Component',
-            icon: 'fas fa-code',
-            button: {
-              icon: 'fas fa-plus',
-              label: 'Add to page',
-              onclick: addComponentToPage
-            }
-          }
-        })
-      },
-      {
-        title: 'Symbol',
-        id: 'toolbar--symbols',
-        icon: 'clone',
-        onclick: () => modal.show('COMPONENT_LIBRARY', {
-          button: {
-            onclick: addComponentToPage
-          }
-        }) 
-      },
-      {
-        id: 'toolbar--sections',
-        title: 'Section',
-        icon: 'columns',
-        onclick: () => modal.show('PAGE_SECTIONS') 
-      },
-    ],
+    // [
+    //   {
+    //     id: 'toolbar--formatting',
+    //     title: 'Content',
+    //     icon: 'heading',
+    //     buttons: _.flatten(editorialButtons)
+    //   }
+    // ],
+    // [
+    //   {
+    //     id: 'toolbar--component',
+    //     title: 'Component',
+    //     icon: 'code',
+    //     onclick: () => modal.show('COMPONENT_EDITOR', {
+    //       header: {
+    //         title: 'Create Component',
+    //         icon: 'fas fa-code',
+    //         button: {
+    //           icon: 'fas fa-plus',
+    //           label: 'Add to page',
+    //           onclick: addComponentToPage
+    //         }
+    //       }
+    //     })
+    //   },
+    //   {
+    //     title: 'Symbol',
+    //     id: 'toolbar--symbols',
+    //     icon: 'clone',
+    //     onclick: () => modal.show('COMPONENT_LIBRARY', {
+    //       button: {
+    //         onclick: addComponentToPage
+    //       }
+    //     }) 
+    //   },
+    //   {
+    //     id: 'toolbar--sections',
+    //     title: 'Section',
+    //     icon: 'columns',
+    //     onclick: () => modal.show('PAGE_SECTIONS') 
+    //   },
+    // ],
     [
       {
         id: 'toolbar--html',

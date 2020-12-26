@@ -15,6 +15,7 @@
   import {styles as pageStyles} from '../../../stores/app/activePage'
   let styles = $siteStyles
 
+  export let show = false
   export let symbol;
   export let title = symbol.title || '';
 
@@ -35,28 +36,18 @@
   }
 
   let iframe
-  let iframeHeight = symbol.height || 250
-  $: containerHeight = iframeHeight / 3
 
-  onMount(() => {
-    iframe.onload = () => {
-      iframeHeight = iframe.contentWindow.document.body.scrollHeight
-      // saveComponentHeight(iframeHeight)
-    }
+  function getPreview(symbol) {
+    console.log('Getting symbol', symbol.id)
     const parentStyles = $tailwind + $siteStyles.final + $pageStyles.final
-    const previewCode = createSymbolPreview({
+    return createSymbolPreview({
       id: symbol.id,
       html: symbol.value.final.html,
       wrapper: $wrapper,
       js: symbol.value.final.js,
       css: parentStyles + symbol.value.final.css
     });
-    preview.update(p => ({
-      ...p,
-      [symbol.id]: previewCode
-    }))
-
-  })
+  }
 
   let iframeLoaded = false
 
@@ -90,7 +81,7 @@
     </div>
   </div>
   <div bind:this={iframeContainer}>
-    <iframe on:load={() => {iframeLoaded = true}} class:fadein={iframeLoaded} style="transform: scale({scale})" class="w-full shadow-lg" bind:this={iframe} title="component preview" srcdoc={$preview[symbol.id]}></iframe>
+    <iframe on:load={() => {iframeLoaded = true}} class:fadein={iframeLoaded} style="transform: scale({scale})" class="w-full shadow-lg" bind:this={iframe} title="component preview" srcdoc={getPreview(symbol)}></iframe>
   </div>
 </div>
 

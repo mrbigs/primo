@@ -180,8 +180,9 @@
 {/if}
 
 <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-  {#each $symbols as symbol (getID(symbol))}
+  {#each $symbols as symbol, i (getID(symbol))}
     <Container
+      show={i === 0 || i === 1}
       on:copy={() => copySymbol(symbol)}
       on:update={({detail}) => updateSymbol(symbol, detail)}
       on:edit={() => editSymbol(symbol)}

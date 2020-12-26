@@ -20,10 +20,8 @@
     createDebouncer,
   } from "../../../utils";
 
-  import { styles as siteStyles, fields as siteFields } from "../../../stores/data/draft";
-  import {fields as pageFields, styles as pageStyles, dependencies as pageDependencies} from "../../../stores/app/activePage"
-  import {content} from "../../../stores/app/activePage"
-  // import {symbols} from "../../../stores/data/draft";
+  import { styles as siteStyles } from "../../../stores/data/draft";
+  import {styles as pageStyles} from "../../../stores/app/activePage"
   import { switchEnabled } from "../../../stores/app";
   import fieldTypes from "../../../stores/app/fieldTypes";
   import modal from "../../../stores/app/modal";
@@ -39,8 +37,7 @@
   import type {
     Fields,
     Component,
-    Property,
-    FieldType,
+    Property
   } from "../../../types/components";
 
   //TODO: CreateComponent needs to have a type defined, where the prop  type is fixed to be "component"
@@ -89,7 +86,7 @@
   async function compileHtml(html: string): Promise<void> {
     loading = true;
     saveRawValue("html", html);
-    const res = await processors.html(rawHTML, componentData)
+    let res = await processors.html(rawHTML, componentData)
     if (res.error) {
       disableSave = true
       res = `<pre class="flex justify-start p-8 items-start bg-red-100 text-red-900 h-screen font-mono text-xs lg:text-sm xl:text-md">${res.error}</pre>`
@@ -99,7 +96,7 @@
     }
     saveFinalValue("html", finalHTML);
     if(finalJS) {
-      finalJS = `${finalJS} // ${getUniqueId()}` // force preview to reload so JS evaluates over new DOM
+      finalJS = `${finalJS} // }` // force preview to reload so JS evaluates over new DOM
     }
     quickDebounce([() => {
       loading = false
@@ -451,6 +448,7 @@
                     {disabled}
                     on:input={updateHtmlWithFieldData} />
                 </EditField>
+                <svelte:component this={field.adminComponent} />
                 {#if field.type === 'group'}
                   {#if field.fields}
                     {#each field.fields as subfield}
