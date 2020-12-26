@@ -4,12 +4,21 @@
   import {getUniqueId} from '../../utils'
   import Section from './Layout/Section.svelte'
   import Column from './Layout/Column.svelte'
+  import OptionsButtons from './Layout/OptionsButtons.svelte'
   import ContentNode from './Layout/ContentNode.svelte'
   import ComponentNode from './Layout/ComponentNode.svelte'
   import {focusedNode} from '../../stores/app'
   import {wrapper as siteWrapper} from '../../stores/data/draft'
   import {wrapper as pageWrapper} from '../../stores/app/activePage'
   const dispatch = createEventDispatcher()
+  import {IconButton} from '../../components/misc'
+  import SectionButtons from './Layout/SectionButtons.wc.svelte'
+  if (!customElements.get('section-buttons')) { 
+    customElements.define('section-buttons', SectionButtons); 
+  }
+
+  import {id} from '../../stores/app/activePage'
+  import {pages} from '../../stores/data/draft'
 
   export let content
 
@@ -216,6 +225,38 @@
       },
     };
   }
+
+  function OptionsRow() {
+    return {
+      id: getUniqueId(),
+      type: "options"
+    };
+  }
+
+  function insertOptionsRow(componentId, componentIndex, position = "above") {
+    content = content.map((section) => ({
+      ...section,
+      columns: section.columns.map((column) => ({
+        ...column,
+        rows: _.some(column.rows, ["id", componentId])
+          ? positionContentNode(
+              column.rows,
+              OptionsRow(),
+              componentIndex,
+              position
+            )
+          : column.rows,
+      })),
+    }))
+
+    function positionContentNode(rows, newRow, index, position) {
+      if (position === "above") {
+        return [...rows.slice(0, index), newRow, ...rows.slice(index)];
+      } else {
+        return [...rows.slice(0, index + 1), newRow, ...rows.slice(index + 1)];
+      }
+    }
+  }
 </script>
 
 <div class="primo-page" style="border-top: 56px solid rgb(20,20,20)">
@@ -235,15 +276,17 @@
                 contentAbove={hasContentAbove(i, column.rows)}
                 contentBelow={hasContentBelow(i, column.rows)}
                 on:addContentAbove={() => {
-                  insertContentRow(row.id, i, 'above')
+                  // insertContentRow(row.id, i, 'above')
+                  insertOptionsRow(row.id, i, 'above')
                   dispatch('contentChanged')
                 }}
                 on:addContentBelow={() => {
-                  insertContentRow(row.id, i, 'below')
+                  // insertContentRow(row.id, i, 'below')
+                  insertOptionsRow(row.id, i, 'above')
                   dispatch('contentChanged')
                 }}
               />
-            {:else}
+            {:else if row.type === 'content'}
               <ContentNode 
                 {row} 
                 on:focus={({detail:selection}) => {
@@ -272,12 +315,43 @@
                   handleDeletion()
                 }}
               />
+            {:else if row.type === 'options'}
+              <OptionsButtons 
+                on:convert={() => {
+
+                }}
+                on:remove={() => {
+
+                }}
+              />
             {/if}
           {/each}
         </Column>
       {/each}
+      <section-buttons 
+        icon={'code'}
+        contentabove={false}
+        contentbelow={false}
+        on:edit={() => {}}
+        on:delete={() => {}}
+        on:addContentBelow={() => {}}
+        on:addContentAbove={() => {}}
+      ></section-buttons>
     </Section>
   {/each}
   {@html $pageWrapper.below.final}
   {@html $siteWrapper.below.final}
 </div>
+
+<style>
+  .primo-page:hover section-buttons {
+    @apply opacity-100; 
+    user-select: initial;
+    pointer-events: none;
+  }
+  section-buttons {
+    @apply absolute opacity-0 bottom-0 right-0 transition-opacity duration-200;
+    z-index: 100;
+    user-select: none;
+  }
+</style>

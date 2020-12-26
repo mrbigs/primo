@@ -14,6 +14,7 @@
   import {styles as pageStyles} from '../../../stores/app/activePage'
   import { getTailwindConfig } from '../../../stores/helpers';
 
+  export let show = false
   export let symbol;
   export let title = symbol.title || '';
   export let buttons = []
@@ -48,12 +49,7 @@
       css: parentStyles + symbol.value.final.css,
       tailwind: getTailwindConfig()
     });
-    preview.update(p => ({
-      ...p,
-      [symbol.id]: previewCode
-    }))
-
-  })
+  }
 
   let iframeLoaded = false
 
