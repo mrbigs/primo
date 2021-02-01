@@ -49,7 +49,7 @@
       css: parentStyles + symbol.value.final.css,
       tailwind: getTailwindConfig()
     });
-  }
+  })
 
   let iframeLoaded = false
 
