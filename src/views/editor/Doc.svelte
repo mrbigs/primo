@@ -8,17 +8,15 @@
   import ContentNode from './Layout/ContentNode.svelte'
   import ComponentNode from './Layout/ComponentNode.svelte'
   import {focusedNode} from '../../stores/app'
+  import {createComponent, createSymbol} from '../../const'
   import {wrapper as siteWrapper} from '../../stores/data/draft'
   import {wrapper as pageWrapper} from '../../stores/app/activePage'
+  import modal from '../../stores/app/modal'
   const dispatch = createEventDispatcher()
-  import {IconButton} from '../../components/misc'
   import SectionButtons from './Layout/SectionButtons.wc.svelte'
   if (!customElements.get('section-buttons')) { 
     customElements.define('section-buttons', SectionButtons); 
   }
-
-  import {id} from '../../stores/app/activePage'
-  import {pages} from '../../stores/data/draft'
 
   export let content
 
@@ -124,7 +122,7 @@
   }
 
   function insertComponent(component) {
-    const focusedNodeId = get(focusedNode).id;
+    const focusedNodeId = $focusedNode.id;
 
     if (focusedNodeId) {
       // a content node is selected on the page
@@ -158,8 +156,8 @@
     }
 
     function positionComponent(rows, newRow) {
-      const selectedNodePosition = get(focusedNode).position;
-      const selectedNodeSelection = get(focusedNode).selection;
+      const selectedNodePosition = $focusedNode.position;
+      const selectedNodeSelection = $focusedNode.selection;
 
       if (selectedNodePosition === 0) {
         // first row is selected
@@ -257,6 +255,32 @@
       }
     }
   }
+
+  function selectOption(row, option) {
+    console.log('selecting', row, option)
+    const newRow = {
+      'content': ContentRow(),
+      'component': null,
+      'symbol': createSymbol()
+    }[option]
+    if (option === 'component') {
+      modal.show('COMPONENT_EDITOR', {
+        header: {
+          title: 'Create Component',
+          icon: 'fas fa-code',
+          button: {
+            icon: 'fas fa-plus',
+            label: 'Add to page',
+            onclick: (component) => {
+              insertComponent(component)
+            }
+          }
+        }
+      })
+    } else {
+      updateRow(row.id, newRow)
+    }
+  }
 </script>
 
 <div class="primo-page" style="border-top: 56px solid rgb(20,20,20)">
@@ -317,11 +341,9 @@
               />
             {:else if row.type === 'options'}
               <OptionsButtons 
-                on:convert={() => {
-
-                }}
+                on:convert={({detail:type}) => selectOption(row, type)}
                 on:remove={() => {
-
+                  deleteRow(row.id, checkIfOnlyChild(row.id))
                 }}
               />
             {/if}
