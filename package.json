@@ -69,7 +69,6 @@
     "lodash.clonedeep": "^4.5.0",
     "lz-string": "^1.4.4",
     "marked": "^1.2.5",
-    "monacode": "^0.3.1",
     "mousetrap": "^1.6.5",
     "object-path": "^0.11.5",
     "pluralize": "^8.0.0",

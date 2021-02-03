@@ -1,7 +1,10 @@
 <script>
-  import {onMount,createEventDispatcher} from 'svelte'
+  import {onMount,onDestroy,createEventDispatcher} from 'svelte'
   import {fade} from 'svelte/transition'
-  import Monacode from 'monacode'
+
+  import CodeMirror from 'codemirror/lib/codemirror'
+  
+  const dispatch = createEventDispatcher()
 
   export let prefix = ''
   export let value = ''
@@ -15,23 +18,142 @@
   export let docs = null
   export let autofocus = false
 
-
-  let container
-  let editor
-
-  onMount(() => {
-    console.log({container, value})
-    editor = Monacode({ container, value })
-
-    // Listen for changes within the editor
-    editor.getModel().onDidChangeContent((change) => {
-      const newValue = editor.getValue();
-      console.log(newValue);
-    });
+  window.requestIdleCallback(async () => {
+    value = await formatCode(value, mode)
   })
+
+  async function formatCode(code, mode) {
+    const {default:prettier} = await import('prettier')
+    const plugin = await {
+      'html': import('prettier/parser-html'),
+      'css': import('prettier/parser-postcss'),
+      'javascript': import('prettier/parser-babel')
+    }[mode]
+
+    let formatted = code
+    try {
+      formatted = prettier.format(value, { 
+        parser: mode,  
+        plugins: [plugin]
+      })
+    } catch(e) {
+      console.warn(e)
+    }
+    return formatted
+  }
+
+
+  const languageMode = {
+    'css' : 'text/x-scss',
+    'html' : {
+      name: 'handlebars',
+      base: 'text/html'
+    }
+  }[mode] || mode
+
+  var Editor
+
+  async function importCodeMirrorAddons() {
+    // CodeMirror = (await import('codemirror/lib/codemirror.js')).default
+    await Promise.all([
+      import('codemirror/mode/javascript/javascript.js'),
+      import('codemirror/mode/handlebars/handlebars.js'),
+      import('codemirror/mode/xml/xml.js'),
+      import('codemirror/mode/css/css.js'),
+      import('codemirror/addon/edit/closetag.js'),
+      import('codemirror/addon/selection/active-line.js'),
+      import('codemirror/addon/comment/comment.js'),
+      import('codemirror/addon/fold/foldcode.js'),
+      import('codemirror/addon/fold/xml-fold.js'),
+      import('codemirror/keymap/sublime.js')
+    ])
+
+    const {default:emmet} = await import('@emmetio/codemirror-plugin')
+    emmet(CodeMirror);
+
+  }
+
+  onMount(async () => {
+
+    await importCodeMirrorAddons()
+
+    Editor = CodeMirror(editorNode, {
+      // passed values
+      value: prefix + value,
+      mode: languageMode,
+      readOnly: disabled,
+      ...CodeMirrorOptions,
+      // set values
+      autofocus,
+      theme: 'vscode-dark',
+      lineNumbers: true,
+      gutter: true,
+      indentUnit: 4,
+      smartIndent: false,
+      styleActiveLine: {nonEmpty: true},
+      styleActiveSelected: true,
+      keyMap: 'sublime',
+      extraKeys: {
+        'Tab': 'emmetExpandAbbreviation',
+        'Esc': 'emmetResetAbbreviation',
+        'Enter': 'emmetInsertLineBreak'
+      },
+      viewportMargin: Infinity,
+      ... typeof languageMode === 'string' && languageMode.includes('css') ? {} : {
+        emmet: {
+          previewOpenTag: false
+        },
+      }, // don't run emmet on CSS (because it shows that ugly box)
+      autoCloseTags: true
+    });
+    setTimeout(() => {Editor.refresh()}, 500) // needs this for some reason
+
+    Editor.on('change', () => {
+      const newValue = Editor.doc.getValue()
+      value = newValue.replace(prefix, '')
+      dispatch('change')
+    })
+    Editor.on("gutterClick", foldHTML);
+    function foldHTML(cm, where) { cm.foldCode(where, CodeMirror.tagRangeFinder); }
+
+    // set editor height (can't figure out how to set it without to not overflow the modal height)
+    setTimeout(() => {
+      if (editorNode) {
+        editorNode.firstChild.classList.add('fadein')
+      } 
+    }, 100) // so the fade works
+  })
+
+  $: {
+    if (Editor) {
+      // make bind:value work from parent to child
+      if ((prefix+value) !== Editor.doc.getValue()) {
+        Editor.getDoc().setValue(prefix+value)
+      }
+      // make `disabled` dynamic
+      Editor.setOption('readOnly', disabled)
+    }
+  } 
+
+  let editorNode
+
 </script>
 
-<div bind:this={container}></div>
+<svelte:window 
+  on:resize={() => {
+    Editor.setSize(null, editorNode.clientHeight)
+  }}
+/>
+
+<div class="codemirror-container" style="{style}">
+  <div in:fade={{ duration: 200 }} bind:this={editorNode} style="min-height:100px"></div>
+  {#if docs}
+    <a target="blank" href="{docs}" class="z-10 text-xs pointer-events-auto flex items-center absolute bottom-0 right-0 h-auto text-gray-100 py-1 px-3 m-1 bg-gray-900 hover:bg-primored transition-colors duration-200">
+      <i class="fas fa-external-link-alt mr-1"></i>
+      <span>Docs</span>
+    </a>
+  {/if}
+</div>
 
 <style global>
 
