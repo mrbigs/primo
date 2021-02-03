@@ -322,9 +322,13 @@
                   })
                 }}
                 on:change={({detail:html}) => {
-                  saveRow({ id: row.id, value: {html} })
-                  focusedNode.updatePath({ section, column, row })
-                  dispatch('contentChanged')
+                  console.log('changed')
+                  _.debounce(() => {
+                    console.log('debounced')
+                    saveRow({ id: row.id, value: {html} })
+                    focusedNode.updatePath({ section, column, row })
+                    dispatch('contentChanged')
+                  }, 2000)
                 }}
                 on:blur={() => {}}
                 on:selectionChange={({detail:selection}) => {
