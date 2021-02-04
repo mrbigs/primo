@@ -9,7 +9,7 @@ import {site} from './src/stores/data/draft'
 import dropdown from './src/stores/app/dropdown'
 import fieldTypes from './src/stores/app/fieldTypes'
 import modal from './src/stores/app/modal'
-import {registerProcessors} from './src/component'
+import {registerProcessors,processors} from './src/component'
 import { DEFAULTS, createPage, createSite } from './src/const'
 import PrimoFieldTypes from './src/field-types'
 
@@ -35,6 +35,7 @@ export {
   PrimoFieldTypes,
   dropdown,
   stores,
-  registerProcessors
+  registerProcessors,
+  processors
 }
 export default Primo

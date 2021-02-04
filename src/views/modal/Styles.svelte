@@ -8,6 +8,7 @@
   import {CodePreview} from '../../components/misc'
   import {SaveButton} from '../../components/buttons'
   import { wrapInStyleTags,buildPagePreview, createDebouncer } from '../../utils'
+
   import ModalHeader from './ModalHeader.svelte'
   import {processors} from '../../component'
 
@@ -79,11 +80,7 @@
     const result = await processors.css(
       styles.raw, 
       {
-        tailwindConfig: styles.tailwind, 
-        includeBase: false,
-        includeTailwind: false,
-        purge: false,
-        html: ''
+        tailwind: getTailwindConfig(true)
       }
     );
     loading = false

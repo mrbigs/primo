@@ -14,15 +14,18 @@ export function getSymbol(symbolID) {
    return _.find(get(symbols), ['id', symbolID]);
 }
 
-export function getTailwindConfig() {
+export function getTailwindConfig(asString = false) {
   const { tailwind:pageTW } = get(pageStyles)
   const { tailwind:siteTW } = get(siteStyles)
   const combined = getCombinedTailwindConfig(pageTW, siteTW)
-  let asObj = {}
-  try {
-    asObj = new Function(`return ${combined}`)()
-  } catch(e) {
-    console.warn(e)
+  let finalConfig = combined
+  if (!asString) {
+    try {
+      finalConfig = new Function(`return ${combined}`)()
+    } catch(e) {
+      console.warn(e)
+    }
   }
-  return asObj
+
+  return finalConfig
 }
