@@ -1,12 +1,11 @@
 <script>
   import {fade} from 'svelte/transition'
-  import {IconButton} from '../../components/buttons'
-  import { createEventDispatcher } from 'svelte';
-  const dispatch = createEventDispatcher();
   import modal from '../../stores/app/modal'
-  import {content} from '../../stores/app/activePage'
   import {insertSection} from '../../stores/actions'
+  import {getUniqueId} from '../../utils'
   import ModalHeader from './ModalHeader.svelte'
+
+  export let onSelect = null
 
   let fullwidth = false
   let gapless = false
@@ -35,12 +34,53 @@
   ]
 
   function selectSection(columns) {
-    insertSection({
-      fullwidth,
-      gapless,
-      columns
-    })
-    modal.hide()
+    const newSection = createSection({
+      width: fullwidth ? "fullwidth" : "contained",
+      columns: columns.map((c) => ({
+        id: getUniqueId(),
+        size: c,
+        rows: [OptionsRow()]
+      })),
+    });
+    if (onSelect) {
+      onSelect(newSection)
+    } else {
+      insertSection(newSection)
+      modal.hide()
+    }
+  }
+
+  function createSection(options = {}) {
+    return {
+      type: 'section',
+      id: getUniqueId(),
+      width: "contained",
+      columns: [
+        {
+          id: getUniqueId(),
+          size: "",
+          rows: [OptionsRow()],
+        },
+      ],
+      ...options,
+    }
+  }
+
+  function ContentRow() {
+    return {
+      id: getUniqueId(),
+      type: "content",
+      value: {
+        html: "",
+      },
+    };
+  }
+
+  function OptionsRow() {
+    return {
+      id: getUniqueId(),
+      type: "options"
+    };
   }
 
 </script>
