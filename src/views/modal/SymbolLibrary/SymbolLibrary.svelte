@@ -5,7 +5,7 @@
 
 <script>
   import { createEventDispatcher, onMount } from 'svelte'
-  import _ from 'lodash'
+  import {some} from 'lodash'
   import {pop} from 'svelte-spa-router'
   import { Tabs } from "../../../components/misc";
   import axios from 'axios'
@@ -48,7 +48,7 @@
   }
 
   async function placeSymbol(symbol) {
-    const exists = _.some($symbols, ['id',symbol.id])
+    const exists = some($symbols, ['id',symbol.id])
     if (exists) {
       actions.update(symbol)
     } else {

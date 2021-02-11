@@ -1,5 +1,4 @@
 <script lang="ts">
-  import _ from 'lodash'
   import Editor from './Editor.svelte'
   import { wrapInStyleTags } from '../../utils'
 

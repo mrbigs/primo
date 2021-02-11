@@ -1,7 +1,7 @@
 module.exports = {
   purge: {
-    enabled: true,
-    content: ["src/**/*.svelte", "node_modules/primo-app/src/**/*.svelte"],
+    enabled: !process.env.ROLLUP_WATCH,
+    content: ["./src/**/*.svelte", "./node_modules/@primo-app/primo/src/**/*.svelte"],
     options: {
       // Fixes class:whatever-tailwind-utility issue
       defaultExtractor: content => {
@@ -27,13 +27,18 @@ module.exports = {
   },
   // important: true,
   theme: {
+    fontFamily: {
+      sans: ['Open Sans', 'sans-serif'],
+      mont: ['Montserrat','sans-serif']
+    },
     container: {
       center: true
     },
     extend: {
       colors: {
         primored: 'rgb(248,68,73)',
-        codeblack: 'rgb(30,30,30)'
+        codeblack: 'rgb(30,30,30)',
+        black: '#111'
       }
     }
   },

@@ -1,6 +1,4 @@
 <script>
-  import axios from 'axios'
-  import _ from 'lodash'
   import {CodeMirror} from '../../../components'
 
   export let headEmbed

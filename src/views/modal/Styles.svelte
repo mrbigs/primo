@@ -1,12 +1,7 @@
 <script>
-  import {createEventDispatcher, onMount, onDestroy} from 'svelte'
-  import {writable} from 'svelte/store'
-  const dispatch = createEventDispatcher()
-  import _ from 'lodash'
   import {CodeMirror} from '../../components'
   import {Tabs} from '../../components/misc'
   import {CodePreview} from '../../components/misc'
-  import {SaveButton} from '../../components/buttons'
   import { wrapInStyleTags,buildPagePreview, createDebouncer } from '../../utils'
   import ModalHeader from './ModalHeader.svelte'
   import {processors} from '../../component'

@@ -1,6 +1,6 @@
 import {getContext} from 'svelte'
 import { writable, derived, get } from 'svelte/store';
-import _ from 'lodash'
+import {debounce, merge} from 'lodash'
 import { set, get as getIDB } from 'idb-keyval';
 import axios from 'axios'
 import {processors} from '../../component'
@@ -27,7 +27,7 @@ export default {
   reload: async () => {
     await hydrateTailwind()
   },
-  swapInConfig: _.debounce(async (tempConfig, callback) => {
+  swapInConfig: debounce(async (tempConfig, callback) => {
     const tw = await getTailwindStyles(tempConfig)
     callback()
     setLocalStorage(tw)
@@ -76,7 +76,7 @@ export function getCombinedTailwindConfig(pageTW, siteTW) {
   try {
     siteTailwindObject = new Function(`const require = (id) => id; return ${siteTW}`)() // convert string object to literal object
     pageTailwindObject = new Function(`const require = (id) => id; return ${pageTW}`)()
-    const combined = _.merge(siteTailwindObject, pageTailwindObject)
+    const combined = merge(siteTailwindObject, pageTailwindObject)
     const asString = JSON.stringify(combined)
     const withPlugins = asString.replace(`"@tailwindcss/ui"`,`require('@tailwindcss/ui')`)
     return withPlugins

@@ -1,6 +1,5 @@
 <script>
   import { onMount, onDestroy } from 'svelte'
-  import _ from 'lodash'
   import { get, set } from 'idb-keyval';
   import { BroadcastChannel } from 'broadcast-channel';
   import { fade } from 'svelte/transition'

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import _ from 'lodash'
+  import { flatMap, flattenDeep, find, some } from 'lodash'
   import { createEventDispatcher } from 'svelte' 
   import { links } from "svelte-routing";
   import {createDebouncer} from '../../utils'
@@ -50,7 +50,7 @@
   }
 
   function determineIfSectionIsEmpty(section:SectionType): boolean {
-    const dataInRows = _.flatMap(section.columns, column => column.rows.map(row => row.value))
+    const dataInRows = flatMap(section.columns, column => column.rows.map(row => row.value))
     const dataInRowsEmpty = dataInRows.filter(row => row.html !== '<p><br></p>').length === 0
     return dataInRowsEmpty
   }
@@ -65,14 +65,14 @@
   }
 
   function getRowById(id:string): Row {
-    const rows = _.flattenDeep(content.map(section => section.columns.map(column => column.rows)))
-    return _.find(rows, ['id', id])
+    const rows = flattenDeep(content.map(section => section.columns.map(column => column.rows)))
+    return find(rows, ['id', id])
   }
 
   function checkIfOnlyChild(id:string): boolean {
     return content.map(section => {
       return section.columns.filter(column => {
-        return _.some(column.rows, ['id', id])
+        return some(column.rows, ['id', id])
       })[0]
     }).filter(i => i)[0]['rows']['length'] === 1 
   }
@@ -112,10 +112,10 @@
   }
 
   function getRow(id) {
-    const rows = _.flattenDeep(
+    const rows = flattenDeep(
       content.map((section) => section.columns.map((column) => column.rows))
     );
-    return _.find(rows, ["id", id]);
+    return find(rows, ["id", id]);
   }
 
   function insertComponent(component) {
@@ -127,7 +127,7 @@
         ...section,
         columns: section.columns.map((column) => ({
           ...column,
-          rows: _.some(column.rows, ["id", focusedNodeId]) // this column contains the selected node
+          rows: some(column.rows, ["id", focusedNodeId]) // this column contains the selected node
             ? positionComponent(column.rows, component) // place the component within
             : column.rows,
         })),
@@ -190,7 +190,7 @@
       ...section,
       columns: section.columns.map((column) => ({
         ...column,
-        rows: _.some(column.rows, ["id", componentId])
+        rows: some(column.rows, ["id", componentId])
           ? positionContentNode(
               column.rows,
               ContentRow(),

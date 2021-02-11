@@ -1,6 +1,6 @@
 <script lang="ts">
   import Mousetrap from 'mousetrap'
-  import _ from 'lodash'
+  import {flattenDeep, find, some} from 'lodash'
   import { createEventDispatcher } from 'svelte'
 
   const dispatch = createEventDispatcher()
@@ -10,7 +10,7 @@
   import Doc from './Doc.svelte'
 
   // import site from '../../stores/data/site'
-  import {focusedNode,switchEnabled} from '../../stores/app'
+  import {focusedNode as focusedNodeStore,switchEnabled} from '../../stores/app'
   import {undone} from '../../stores/data/draft'
   import {saving,unsaved} from '../../stores/app/misc'
   import modal from '../../stores/app/modal'
@@ -18,6 +18,11 @@
   import {id, content} from '../../stores/app/activePage'
   import {makeDeveloperButtons, makeEditorButtons, makeEditorialButtons} from '../../constants'
   import type {Button,ButtonGroup,Component} from './Layout/LayoutTypes'
+
+  let focusedNode
+  focusedNodeStore.subscribe(s => {
+    focusedNode = s
+  })
 
   let unlockingPage:boolean = false
 
@@ -65,10 +70,10 @@
   }
 
   function getRow(id) {
-    const rows = _.flattenDeep(
+    const rows = flattenDeep(
       $content.map((section) => section.columns.map((column) => column.rows))
     );
-    return _.find(rows, ["id", id]);
+    return find(rows, ["id", id]);
   }
 
   function updateRow(rowId, updatedRow) {
@@ -90,7 +95,7 @@
   }
 
   function insertComponent(component) {
-    const focusedNodeId = $focusedNode.id;
+    const focusedNodeId = focusedNode.id;
 
     if (focusedNodeId) {
       // a content node is selected on the page
@@ -98,7 +103,7 @@
         ...section,
         columns: section.columns.map((column) => ({
           ...column,
-          rows: _.some(column.rows, ["id", focusedNodeId]) // this column contains the selected node
+          rows: some(column.rows, ["id", focusedNodeId]) // this column contains the selected node
             ? positionComponent(column.rows, component) // place the component within
             : column.rows,
         })),
@@ -124,8 +129,8 @@
     }
 
     function positionComponent(rows, newRow) {
-      const selectedNodePosition = $focusedNode.position;
-      const selectedNodeSelection = $focusedNode.selection;
+      const selectedNodePosition = focusedNode.position;
+      const selectedNodeSelection = focusedNode.selection;
 
       if (selectedNodePosition === 0) {
         // first row is selected

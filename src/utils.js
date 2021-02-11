@@ -1,4 +1,4 @@
-import _ from "lodash";
+import {chain, debounce, cloneDeep} from "lodash";
 import axios from "axios";
 import { getContext } from "svelte";
 import { get } from "svelte/store";
@@ -39,7 +39,7 @@ export function convertFieldsToData(fields) {
   const parsedFields = fields.map((field) => {
     if (field.type === "group") {
       if (field.fields) {
-        field.value = _.chain(field.fields)
+        field.value = chain(field.fields)
           .keyBy("key")
           .mapValues("value")
           .value();
@@ -48,7 +48,7 @@ export function convertFieldsToData(fields) {
     return field;
   })
 
-  return _.chain(parsedFields).keyBy("key").mapValues("value").value();
+  return chain(parsedFields).keyBy("key").mapValues("value").value();
 }
 
 export function scrambleIds(content) {
@@ -82,7 +82,7 @@ export function scrambleIds(content) {
 
 // Lets us debounce from reactive statements
 export function createDebouncer(time) {
-  return _.debounce((val) => {
+  return debounce((val) => {
     const [fn, arg] = val;
     fn(arg);
   }, time);
@@ -193,7 +193,7 @@ export async function hydrateComponent(component) {
 }
 
 export function duplicatePage(page, title, url) {
-  const newPage = _.cloneDeep(page);
+  const newPage = cloneDeep(page);
   const [newContent, IDmap] = scrambleIds(page.content);
   newPage.content = newContent;
   newPage.title = title;

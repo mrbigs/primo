@@ -1,10 +1,7 @@
 <script lang="ts">
-  import { slide, fade } from 'svelte/transition'
-  import _ from 'lodash'
-  import { createEventDispatcher, onMount } from 'svelte'
+  import { createEventDispatcher } from 'svelte'
   const dispatch = createEventDispatcher()
   import {Tabs} from '../../components/misc'
-  import {SaveButton} from '../../components/buttons'
   import {CodeMirror} from '../../components'
   import { parseHandlebars, convertFieldsToData } from '../../utils'
   import ModalHeader from './ModalHeader.svelte'

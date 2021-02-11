@@ -1,4 +1,4 @@
-import _ from 'lodash'
+import {chain, unionBy, cloneDeep, findIndex} from 'lodash'
 import {get} from 'svelte/store'
 
 export async function hydrateAllComponents(content) {

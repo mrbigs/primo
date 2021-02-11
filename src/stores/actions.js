@@ -1,4 +1,4 @@
-import _ from 'lodash'
+import {find, cloneDeep, unionBy, findIndex, last} from 'lodash'
 import {get} from 'svelte/store'
 import {getAllFields} from './helpers'
 import {convertFieldsToData, parseHandlebars, hydrateAllComponents} from '../utils'
@@ -37,12 +37,12 @@ export async function updateInstances(symbol) {
                     // Update row from Symbol's HTML, CSS, and JS & Instance's data
 
                     // Replace row's fields with symbol's fields while preserving row's data
-                    const symbolFields = _.cloneDeep(symbol.value.raw.fields)
+                    const symbolFields = cloneDeep(symbol.value.raw.fields)
                     const instanceFields = row.value.raw.fields
-                    const mergedFields = _.unionBy(symbolFields, instanceFields, "id");
+                    const mergedFields = unionBy(symbolFields, instanceFields, "id");
 
                     instanceFields.forEach(field => {
-                      let newFieldIndex = _.findIndex(mergedFields, ['id',field.id])
+                      let newFieldIndex = findIndex(mergedFields, ['id',field.id])
                       mergedFields[newFieldIndex]['value'] = field.value
                     })
 
@@ -94,7 +94,7 @@ export async function updateInstances(symbol) {
       )
     }))
   )
-  const activePageContent = _.find(updatedPages, ['id', get(id)])['content']
+  const activePageContent = find(updatedPages, ['id', get(id)])['content']
   content.set(activePageContent)
   stores.pages.set(updatedPages)
 }
@@ -106,7 +106,7 @@ export async function hydrateComponents() {
         const allFields = getAllFields(component.value.raw.fields);
         const data = await convertFieldsToData(allFields, "all");
         const finalHTML = await parseHandlebars(component.value.raw.html, data);
-        const updatedComponent = _.cloneDeep(component)
+        const updatedComponent = cloneDeep(component)
         updatedComponent.value.final.html = finalHTML
         return updatedComponent
       });
@@ -116,7 +116,7 @@ export async function hydrateComponents() {
       };
     })
   );
-  const activePageContent = _.find(updatedPages, ['id', get(id)])['content']
+  const activePageContent = find(updatedPages, ['id', get(id)])['content']
   content.set(activePageContent)
   stores.pages.set(updatedPages)
 }
@@ -188,7 +188,7 @@ export function undoSiteChange() {
   undone.update(u => ([ ...state.slice(state.length - 1), ...u ]))
 
   // Set Site
-  const siteWithoutLastChange = _.last(timelineWithoutLastChange)
+  const siteWithoutLastChange = last(timelineWithoutLastChange)
 
   hydrateSite(siteWithoutLastChange)
 }
@@ -202,7 +202,7 @@ export function redoSiteChange() {
 // experimenting with exporting objects to make things cleaner
 export const symbols = {
   create: (symbol) => {
-    stores.symbols.update(s => [ _.cloneDeep(symbol), ...s ])
+    stores.symbols.update(s => [ cloneDeep(symbol), ...s ])
   },
   update: (toUpdate) => {
     stores.symbols.update(symbols => {
@@ -222,7 +222,7 @@ export const symbols = {
         const allFields = getAllFields(symbol.value.raw.fields);
         const data = await convertFieldsToData(allFields, "all");
         const finalHTML = await parseHandlebars(symbol.value.raw.html, data);
-        const updatedSymbol = _.cloneDeep(symbol)
+        const updatedSymbol = cloneDeep(symbol)
         updatedSymbol.value.final.html = finalHTML
         return updatedSymbol
       })
@@ -234,9 +234,9 @@ export const symbols = {
 export const pages = {
   add: (newpage, path) => {
     const currentPages = get(stores.pages)
-    let newPages = _.cloneDeep(currentPages)
+    let newPages = cloneDeep(currentPages)
     if (path.length > 0) {
-      const rootPage = _.find(newPages, ['id', path[0]])
+      const rootPage = find(newPages, ['id', path[0]])
       rootPage.pages = rootPage.pages ? [ ...rootPage.pages, newpage ] : [ newpage ]
     } else {
       newPages = [ ...newPages, newpage ]
@@ -245,9 +245,9 @@ export const pages = {
   },
   delete: (pageId, path) => {
     const currentPages = get(stores.pages)
-    let newPages = _.cloneDeep(currentPages)
+    let newPages = cloneDeep(currentPages)
     if (path.length > 0) {
-      const rootPage = _.find(newPages, ['id', path[0]])
+      const rootPage = find(newPages, ['id', path[0]])
       rootPage.pages = rootPage.pages.filter(page => page.id !== pageId)
     } else {
       newPages = newPages.filter(page => page.id !== pageId)

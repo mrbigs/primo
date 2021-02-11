@@ -1,6 +1,6 @@
 <script lang="ts">
-	import _ from 'lodash'
-	import queryParser from "query-string";
+	import {find} from 'lodash'
+	// import queryParser from "query-string";
 
 	import Router, {location,querystring} from 'svelte-spa-router'
 	import {wrap} from 'svelte-spa-router/wrap'
@@ -18,6 +18,7 @@
 	import {content, styles, fields, dependencies, wrapper} from './stores/app/activePage'
   import {switchEnabled, userRole} from './stores/app'
 	import {saving as savingStore} from './stores/app/misc'
+	import {createSite} from './const'
 
 	import {unsaved} from './stores/app/misc'
 	import site from './stores/data/site'
@@ -43,11 +44,11 @@
 	$: setPageContent($pageId, $pages)
 	function setPageContent(id, pages) {
 		const [ root, child ] = id.split('/')
-		const rootPage = _.find(pages, ['id', root])
+		const rootPage = find(pages, ['id', root])
 		if (!child && rootPage) {
 			setPageStore(rootPage)
 		} else if (rootPage) {
-			const childPage = _.find(rootPage.pages, ['id', id])
+			const childPage = find(rootPage.pages, ['id', id])
 			setPageStore(childPage)
 		}
 
@@ -60,20 +61,21 @@
 		}
 	}
 
+	let activeModal 
 	$: activeModal = getActiveModal($querystring)
 	function getActiveModal(query) {
-		const { m:type } = queryParser.parse(query)
-		return type ? {
-			'pages' : modals.SitePages,
-			'component' : modals.ComponentEditor,
-			'symbols' : modals.SymbolLibrary,
-			'sections' : modals.PageSections,
-			'fields' : modals.Fields,
-			'dependencies' : modals.Dependencies,
-			'html' : modals.HTML,
-			'css' : modals.CSS,
-			'release-notes' : modals.ReleaseNotes,
-		}[type] || $modal.component : null
+		// const { m:type } = queryParser.parse(query)
+		// return type ? {
+		// 	'pages' : modals.SitePages,
+		// 	'component' : modals.ComponentEditor,
+		// 	'symbols' : modals.SymbolLibrary,
+		// 	'sections' : modals.PageSections,
+		// 	'fields' : modals.Fields,
+		// 	'dependencies' : modals.Dependencies,
+		// 	'html' : modals.HTML,
+		// 	'css' : modals.CSS,
+		// 	'release-notes' : modals.ReleaseNotes,
+		// }[type] || $modal.component : null
 	}
 
 </script>

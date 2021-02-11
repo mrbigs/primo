@@ -1,7 +1,6 @@
 <script>
   import axios from 'axios'
-  import _ from 'lodash'
-  import {fade} from 'svelte/transition'
+  import {some} from 'lodash'
   import {IconButton} from '../../../components/buttons'
 
   import LibraryCard from './LibraryCard.svelte'
@@ -63,7 +62,7 @@
     links: Object.entries(r.links).map(l => ({ site: l[0], href: l[1] })),
     version: r.version,
     date: r.date,
-    used: _.some(libraries, ['name', r.name])
+    used: some(libraries, ['name', r.name])
   }))
 
   let packageName = ''

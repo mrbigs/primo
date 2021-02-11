@@ -1,0 +1,7 @@
+{
+  "extends": "@tsconfig/svelte/tsconfig.json",
+  "include": ["src/**/*"],
+  "esModuleInterop": true,
+  "resolveJsonModule": true,
+  "types": ["svelte"]
+}

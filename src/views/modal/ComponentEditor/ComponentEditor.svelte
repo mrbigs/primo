@@ -1,5 +1,5 @@
 <script lang="ts">
-  import _ from "lodash";
+  import {cloneDeep, find, isEqual} from "lodash-es";
   import { onMount } from "svelte";
 
   import {createUniqueID} from '../../../utilities'
@@ -54,7 +54,7 @@
     },
   };
 
-  let localComponent: Component = _.cloneDeep(component);
+  let localComponent: Component = cloneDeep(component);
 
   function saveRawValue(property: Property, value: any): void {
     localComponent.value.raw[property] = value;
@@ -143,7 +143,6 @@
         data: ${JSON.stringify(getData(fields))},
         fields: ${JSON.stringify(getAllFields(fields))}
       }
-      // turn [import _ from 'lodash'] into [import _ from 'https://cdn.skypack.dev/lodash'];
       ${js.replace(/(?:import )(\w+)(?: from )['"]{1}(?!http)(.+)['"]{1}/g,`import $1 from 'https://cdn.skypack.dev/$2'`)} 
     `: ``;
     saveRawValue("js", js);
@@ -197,7 +196,7 @@
   async function loadSymbol(): Promise<void> {
     disabled = false;
     const symbol: Component = getSymbol(localComponent.symbolID)
-    localComponent = _.cloneDeep(symbol)
+    localComponent = cloneDeep(symbol)
     compileCss(symbol.value.raw.css) // workaround for styles breaking
     modal.show("COMPONENT_EDITOR", {
       component: symbol,
@@ -326,7 +325,7 @@
   let disableSave = false
 
   function getFieldComponent(field) {
-    const fieldType = _.find(allFieldTypes, ['id', field.type])
+    const fieldType = find(allFieldTypes, ['id', field.type])
     if (fieldType && fieldType.component) {
       return fieldType.component
     } else {
@@ -367,7 +366,7 @@
 <ModalHeader
   {...header}
   warn={() => {
-    if (!_.isEqual(localComponent, component)) {
+    if (!isEqual(localComponent, component)) {
       const proceed = window.confirm('Undrafted changes will be lost. Continue?')
       return proceed
     } else return true

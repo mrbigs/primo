@@ -1,4 +1,4 @@
-import _ from 'lodash'
+import {find} from 'lodash'
 import {writable,get,derived} from 'svelte/store'
 import {pages} from '../data/draft'
 import {DEFAULTS, createPage} from '../../const'
@@ -36,7 +36,7 @@ fields.subscribe(fields => {
 function updatePage(prop) {
 	const [ root, child ] = get(id).split('/')
   if (!child) {
-    const pageToUpdate = _.find(get(pages), ['id', root]) 
+    const pageToUpdate = find(get(pages), ['id', root]) 
     pages.update(
       pages => pages.map(page => page.id === root ? ({
         ...page,

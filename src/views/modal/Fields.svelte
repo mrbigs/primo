@@ -1,5 +1,5 @@
 <script lang="ts">  
-  import _ from 'lodash'
+  import {findIndex,find} from 'lodash'
   import pluralize from 'pluralize'
   import {createEventDispatcher} from 'svelte'
   import {writable} from 'svelte/store'
@@ -117,7 +117,7 @@
   }
 
   function moveRepeaterItem(field, item, direction): void {
-    const indexOfItem:number = _.findIndex(field.value, ['id', item.id])
+    const indexOfItem:number = findIndex(field.value, ['id', item.id])
     const withoutItem:Fields = field.value.filter(i => i.id !== item.id)
     if (direction === 'up') {
       field.value = [...withoutItem.slice(0,indexOfItem-1), item, ...withoutItem.slice(indexOfItem-1)];
@@ -166,7 +166,7 @@
   }
 
   function getComponent(field) {
-    const fieldType =  _.find(allFieldTypes, ['id', field.type])
+    const fieldType =  find(allFieldTypes, ['id', field.type])
     if (fieldType) {
       return fieldType.component
     } else {

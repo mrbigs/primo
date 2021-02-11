@@ -3,7 +3,6 @@
   import { fade } from 'svelte/transition';
   import { createEventDispatcher } from 'svelte';
   import {IconButton} from '../misc'
-  import _ from 'lodash'
 
   export let disabled:boolean = false
 
